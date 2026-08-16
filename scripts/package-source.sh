@@ -11,6 +11,7 @@ archive_path="$release_dir/$archive_name"
 mkdir -p "$release_dir"
 
 tar \
+  --exclude='./.git' \
   --exclude='./.cache' \
   --exclude='./build' \
   --exclude='./dist' \
@@ -18,7 +19,10 @@ tar \
   -czf "$archive_path" \
   -C "$project_dir" .
 
-shasum -a 256 "$archive_path" > "$archive_path.sha256"
+(
+  cd "$release_dir"
+  shasum -a 256 "$archive_name" > "$archive_name.sha256"
+  shasum -a 256 -c "$archive_name.sha256"
+)
 tar -tzf "$archive_path" > /dev/null
-shasum -a 256 -c "$archive_path.sha256"
 echo "NeBrowser source overlay archive created: $archive_path"

@@ -25,8 +25,11 @@ codesign --verify --deep --strict --verbose=2 "$app_path"
 ditto -c -k --keepParent "$app_path" "$archive_path"
 test -s "$mozilla_dmg"
 cp "$mozilla_dmg" "$dmg_path"
-shasum -a 256 "$archive_path" > "$archive_path.sha256"
-shasum -a 256 "$dmg_path" > "$dmg_path.sha256"
+(
+  cd "$release_dir"
+  shasum -a 256 "$(basename "$archive_path")" > "$(basename "$archive_path.sha256")"
+  shasum -a 256 "$(basename "$dmg_path")" > "$(basename "$dmg_path.sha256")"
+)
 
 "$script_dir/verify-local.sh"
 echo "NeBrowser local QA artifacts created in $release_dir"

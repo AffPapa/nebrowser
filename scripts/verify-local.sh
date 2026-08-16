@@ -15,8 +15,11 @@ test -s "$archive_path"
 test -s "$archive_path.sha256"
 test -s "$dmg_path"
 test -s "$dmg_path.sha256"
-shasum -a 256 -c "$archive_path.sha256"
-shasum -a 256 -c "$dmg_path.sha256"
+(
+  cd "$release_dir"
+  shasum -a 256 -c "$(basename "$archive_path.sha256")"
+  shasum -a 256 -c "$(basename "$dmg_path.sha256")"
+)
 unzip -tq "$archive_path"
 hdiutil verify "$dmg_path"
 
