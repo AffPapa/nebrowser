@@ -1,0 +1,7 @@
+<!-- Kept at the upstream resource filename because browser chrome references
+     that stable path. The artwork and visible mark are NeBrowser. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100">
+  <text x="250" y="72" text-anchor="middle" fill="context-fill #eef6ff"
+        font-family="Inter, Helvetica Neue, Arial, sans-serif"
+        font-size="70" font-weight="700" letter-spacing="-3">NeBrowser</text>
+</svg>

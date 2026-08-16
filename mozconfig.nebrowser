@@ -1,0 +1,15 @@
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/obj-nebrowser
+
+ac_add_options --enable-project=browser
+ac_add_options --with-branding=browser/branding/nebrowser
+ac_add_options --with-app-basename=NeBrowser
+ac_add_options --with-distribution-id=org.affpapa
+ac_add_options --enable-update-channel=nebrowser
+ac_add_options --disable-updater
+ac_add_options --disable-crashreporter
+ac_add_options --disable-debug
+ac_add_options --disable-tests
+ac_add_options --enable-optimize
+
+export MOZ_SOURCE_REPO=https://github.com/mozilla-firefox/firefox.git
+export MOZ_SOURCE_CHANGESET=0c39e9282688363f5028d0541c17784f7fa5117c

@@ -1,0 +1,35 @@
+name: Verify source overlay
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate scripts and metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash -n scripts/*.sh
+          python3 -m py_compile scripts/*.py
+          python3 -m json.tool config/release.json >/dev/null
+          grep -Fq 'NEBROWSER_NAME=NeBrowser' config/product.env
+          grep -Fq 'NEBROWSER_BUNDLE_ID=org.affpapa.nebrowser' config/product.env
+          grep -Fq 'datareporting.policy.dataSubmissionEnabled", false' \
+            overlay/browser/branding/nebrowser/pref/firefox-branding.js
+          grep -Fq 'app.normandy.enabled", false' \
+            overlay/browser/branding/nebrowser/pref/firefox-branding.js
+      - name: Check committed files
+        run: |
+          test ! -d .cache
+          test ! -d dist
+          test ! -d build
+          test -s assets/brand/nebrowser-icon-master.png

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "product": "NeBrowser",
+  "productVersion": "0.1.0",
+  "build": 1,
+  "engine": "Firefox",
+  "engineVersion": "153.0.4",
+  "platform": "macos-arm64",
+  "channel": "direct",
+  "status": "local-development",
+  "publicReady": false,
+  "landingURL": "https://affpapa.org/nebrowser/",
+  "sourceURL": "https://github.com/AffPapa/nebrowser",
+  "downloadURL": null,
+  "sha256": null,
+  "notarization": null
+}
