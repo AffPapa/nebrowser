@@ -21,10 +21,13 @@ NeBrowser — независимый браузер AffPapa на открыто�
 
 ## Скачать
 
-Публичный бинарный релиз появится в
-[GitHub Releases](https://github.com/AffPapa/nebrowser/releases) после
-прохождения Apple notarization. Локальные ad-hoc/unsigned сборки намеренно не
-публикуются как пользовательский релиз.
+Технический preview можно скачать в
+[GitHub Releases](https://github.com/AffPapa/nebrowser/releases/tag/v0.1.0-preview).
+Это ad-hoc/unsigned QA-сборка: macOS может не открыть её обычным двойным
+кликом. Она не считается стабильным пользовательским релизом.
+
+Нормальный публичный релиз появится после Apple notarization. Он будет
+подписан Developer ID, stapled и проверен Gatekeeper.
 
 ## Собрать из исходников
 
