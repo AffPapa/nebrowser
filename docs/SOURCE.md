@@ -1,6 +1,6 @@
 # Corresponding source
 
-NeBrowser 0.1.0 uses Firefox 153.0.4 source from Mozilla's official release
+NeBrowser 0.1.1 uses Firefox 153.0.4 source from Mozilla's official release
 archive:
 
 - Source: `https://archive.mozilla.org/pub/firefox/releases/153.0.4/source/firefox-153.0.4.source.tar.xz`
@@ -15,4 +15,3 @@ bootstrap and overlay steps to reconstruct the complete modified source tree.
 Before distributing a NeBrowser binary, publish an immutable snapshot of this
 repository and put its exact URL in `config/release.json` and the application's
 distribution notice.
-

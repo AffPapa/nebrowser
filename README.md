@@ -25,7 +25,7 @@ NeBrowser — независимый браузер AffPapa на открыто�
 ## Скачать
 
 Технический preview можно скачать в
-[GitHub Releases](https://github.com/AffPapa/nebrowser/releases/tag/v0.1.0-preview).
+[GitHub Releases](https://github.com/AffPapa/nebrowser/releases/tag/v0.1.1-preview).
 Это ad-hoc/unsigned QA-сборка: macOS может не открыть её обычным двойным
 кликом. Она не считается стабильным пользовательским релизом.
 
@@ -46,7 +46,7 @@ Upstream Firefox разворачивается под `.cache/` и в Git не 
 
 ## Статус
 
-Версия NeBrowser: **0.1.0**. Движок: **Firefox 153.0.4**. Проект находится в
+Версия NeBrowser: **0.1.1**. Движок: **Firefox 153.0.4**. Проект находится в
 стадии public alpha.
 
 ## Безопасность
