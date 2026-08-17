@@ -109,6 +109,51 @@ def main() -> None:
         "@RESPATH@/browser/chrome/devtools.manifest\n",
         "",
     )
+    replace_once(
+        args.source / "browser/installer/package-manifest.in",
+        "; [DevTools Startup Files]\n"
+        "@RESPATH@/browser/chrome/devtools-startup@JAREXT@\n"
+        "@RESPATH@/browser/chrome/devtools-startup.manifest\n\n",
+        "",
+    )
+
+    # The browser locale Makefile also assumes the full DevTools UI exists.
+    # A server-only build has neither client nor startup locale output, so
+    # remove their langpack/repack hooks together with the package entries.
+    replace_once(
+        args.source / "browser/locales/Makefile.in",
+        "\t@$(MAKE) -C ../../devtools/client/locales AB_CD=$* XPI_NAME=locale-$* XPI_ROOT_APPID='$(XPI_ROOT_APPID)'\n"
+        "\t@$(MAKE) -C ../../devtools/startup/locales AB_CD=$* XPI_NAME=locale-$* XPI_ROOT_APPID='$(XPI_ROOT_APPID)'\n",
+        "",
+    )
+    replace_once(
+        args.source / "browser/locales/Makefile.in",
+        "\t@$(MAKE) -C ../../devtools/client/locales chrome AB_CD=$*\n"
+        "\t@$(MAKE) -C ../../devtools/startup/locales chrome AB_CD=$*\n",
+        "",
+    )
+    replace_once(
+        args.source / "browser/locales/l10n.toml",
+        "\n[[includes]]\n"
+        "    path = \"devtools/client/locales/l10n.toml\"\n"
+        "\n[[paths]]\n"
+        "    reference = \"devtools/startup/locales/en-US/**\"\n"
+        "    l10n = \"{l}devtools/startup/**\"\n",
+        "",
+    )
+    replace_once(
+        args.source / "browser/locales/l10n.ini",
+        "     devtools/client\n"
+        "     devtools/startup\n",
+        "",
+    )
+    replace_once(
+        args.source / "browser/locales/filter.py",
+        '        "devtools/client",\n'
+        '        "devtools/shared",\n'
+        '        "devtools/startup",\n',
+        "",
+    )
 
     patch_gyp_executor_import(
         args.source / "python/mozbuild/mozbuild/frontend/reader.py"
