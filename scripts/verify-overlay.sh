@@ -24,6 +24,11 @@ rg -q --fixed-strings 'pref("browser.ml.chat.enabled", false);' \
   "$branding_dir/pref/firefox-branding.js"
 rg -q --fixed-strings 'pref("screenshots.browser.component.enabled", false);' \
   "$branding_dir/pref/firefox-branding.js"
+if rg -q 'browser/chrome/devtools@JAREXT@|browser/@PREF_DIR@/debugger\.js' \
+  "$source_dir/browser/installer/package-manifest.in"; then
+  echo "The full DevTools client is still listed for packaging" >&2
+  exit 1
+fi
 if rg -q --fixed-strings '<key>CFBundleIconName</key>' \
   "$source_dir/browser/app/macbuild/Contents/Info.plist.in"; then
   echo "CFBundleIconName still overrides the NeBrowser icns fallback" >&2

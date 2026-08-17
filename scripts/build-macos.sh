@@ -24,6 +24,9 @@ export CBINDGEN="$project_dir/.cache/toolchains/cbindgen-0.29.4/bin/cbindgen"
 export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
 export WASI_SYSROOT="$project_dir/.cache/toolchains/sysroot-wasm32-wasi"
 export NEBROWSER_GYP_THREAD_POOL=1
+# The browser build itself does not need Mach's host-process profiler.  It is
+# unavailable in the managed macOS sandbox and otherwise aborts before build.
+export NEBROWSER_DISABLE_RESOURCE_MONITOR=1
 export PYTHONPYCACHEPREFIX="$project_dir/.cache/python-pycache"
 
 "$script_dir/bootstrap-firefox.sh"

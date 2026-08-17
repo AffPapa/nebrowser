@@ -95,6 +95,21 @@ def main() -> None:
         'imply_option("MOZ_NORMANDY", False)',
     )
 
+    # The upstream package manifest assumes the full DevTools client.  In a
+    # server-only build its debugger preference file is intentionally absent;
+    # retaining the manifest entry makes packaging fail after a clean build.
+    replace_once(
+        args.source / "browser/installer/package-manifest.in",
+        "@RESPATH@/browser/@PREF_DIR@/debugger.js\n",
+        "",
+    )
+    replace_once(
+        args.source / "browser/installer/package-manifest.in",
+        "@RESPATH@/browser/chrome/devtools@JAREXT@\n"
+        "@RESPATH@/browser/chrome/devtools.manifest\n",
+        "",
+    )
+
     patch_gyp_executor_import(
         args.source / "python/mozbuild/mozbuild/frontend/reader.py"
     )
@@ -113,6 +128,44 @@ def main() -> None:
         "            os.nice(niceness)\n"
         "        except PermissionError:\n"
         "            return False\n",
+    )
+
+    # A sandboxed macOS build can prohibit psutil from enumerating every host
+    # process.  Finder CPU usage is advisory only, so omit that metric instead
+    # of aborting the compiler before it reaches the actual build.
+    replace_once(
+        args.source / "python/mozbuild/mozbuild/controller/building.py",
+        "        for proc in psutil.process_iter():\n"
+        "            if proc.name != \"Finder\":\n",
+        "        try:\n"
+        "            processes = list(psutil.process_iter())\n"
+        "        except (PermissionError, OSError):\n"
+        "            return None\n"
+        "\n"
+        "        for proc in processes:\n"
+        "            if proc.name != \"Finder\":\n",
+    )
+
+    # Resource profiling is not required to produce or package the browser.
+    # In the managed macOS sandbox psutil cannot enumerate host processes, so
+    # make it an explicit NeBrowser build opt-out and retain normal upstream
+    # profiling behavior everywhere else.
+    replace_once(
+        args.source / "python/mozbuild/mozbuild/controller/building.py",
+        "        record_usage = True\n",
+        "        record_usage = (\n"
+        "            os.environ.get(\"NEBROWSER_DISABLE_RESOURCE_MONITOR\") != \"1\"\n"
+        "        )\n",
+    )
+    replace_once(
+        args.source / "python/mozbuild/mozbuild/controller/building.py",
+        "            monitor.start_resource_recording()\n"
+        "\n"
+        "            if self._check_clobber(self.mozconfig, os.environ):\n",
+        "            if os.environ.get(\"NEBROWSER_DISABLE_RESOURCE_MONITOR\") != \"1\":\n"
+        "                monitor.start_resource_recording()\n"
+        "\n"
+        "            if self._check_clobber(self.mozconfig, os.environ):\n",
     )
 
 
