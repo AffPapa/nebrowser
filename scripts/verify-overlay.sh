@@ -11,25 +11,25 @@ branding_dir="$source_dir/browser/branding/nebrowser"
 test "$(tr -d '[:space:]' < "$source_dir/browser/config/version.txt")" = "$FIREFOX_VERSION"
 test "$(sed -n 's/^MOZ_APP_DISPLAYNAME=//p' "$branding_dir/configure.sh")" = "$NEBROWSER_NAME"
 test "$(sed -n 's/^MOZ_MACBUNDLE_ID=//p' "$branding_dir/configure.sh")" = "$NEBROWSER_MACBUNDLE_ID_SUFFIX"
-rg -q --fixed-strings -- '-brand-product-name = NeBrowser' "$branding_dir/locales/en-US/brand.ftl"
-rg -q --fixed-strings 'pref("browser.startup.homepage",            "https://affpapa.org/");' \
+grep -Fq -- '-brand-product-name = NeBrowser' "$branding_dir/locales/en-US/brand.ftl"
+grep -Fq 'pref("browser.startup.homepage",            "https://affpapa.org/");' \
   "$source_dir/browser/app/profile/firefox.js"
-rg -q --fixed-strings 'pref("datareporting.policy.dataSubmissionEnabled", false);' \
+grep -Fq 'pref("datareporting.policy.dataSubmissionEnabled", false);' \
   "$branding_dir/pref/firefox-branding.js"
-rg -q --fixed-strings 'pref("app.normandy.enabled", false);' \
+grep -Fq 'pref("app.normandy.enabled", false);' \
   "$branding_dir/pref/firefox-branding.js"
-rg -q --fixed-strings 'pref("identity.fxaccounts.enabled", false);' \
+grep -Fq 'pref("identity.fxaccounts.enabled", false);' \
   "$branding_dir/pref/firefox-branding.js"
-rg -q --fixed-strings 'pref("browser.ml.chat.enabled", false);' \
+grep -Fq 'pref("browser.ml.chat.enabled", false);' \
   "$branding_dir/pref/firefox-branding.js"
-rg -q --fixed-strings 'pref("screenshots.browser.component.enabled", false);' \
+grep -Fq 'pref("screenshots.browser.component.enabled", false);' \
   "$branding_dir/pref/firefox-branding.js"
-if rg -q 'browser/chrome/devtools@JAREXT@|browser/@PREF_DIR@/debugger\.js' \
+if grep -Eq 'browser/chrome/devtools@JAREXT@|browser/@PREF_DIR@/debugger\.js' \
   "$source_dir/browser/installer/package-manifest.in"; then
   echo "The full DevTools client is still listed for packaging" >&2
   exit 1
 fi
-if rg -q --fixed-strings '<key>CFBundleIconName</key>' \
+if grep -Fq '<key>CFBundleIconName</key>' \
   "$source_dir/browser/app/macbuild/Contents/Info.plist.in"; then
   echo "CFBundleIconName still overrides the NeBrowser icns fallback" >&2
   exit 1
@@ -42,7 +42,7 @@ for asset in about-logo.svg about-wordmark.svg firefox-wordmark.svg about-logo.p
   test -s "$branding_dir/content/$asset"
 done
 
-if rg -n 'Nightly|Mozilla Firefox|Firefox Nightly' \
+if grep -R -n -E 'Nightly|Mozilla Firefox|Firefox Nightly' \
   "$branding_dir/configure.sh" \
   "$branding_dir/locales/en-US" \
   "$branding_dir/pref" \
@@ -52,5 +52,5 @@ if rg -n 'Nightly|Mozilla Firefox|Firefox Nightly' \
   exit 1
 fi
 
-xcrun assetutil --info "$branding_dir/Assets.car" | rg -q '"Name" : "AppIcon"'
+xcrun assetutil --info "$branding_dir/Assets.car" | grep -Fq '"Name" : "AppIcon"'
 echo "NeBrowser overlay verification passed"

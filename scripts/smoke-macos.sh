@@ -25,6 +25,6 @@ export MOZ_HEADLESS=1
   --screenshot "$screenshot_path" \
   "$NEBROWSER_HOME_URL"
 
-file "$screenshot_path" | rg -q 'PNG image data, 1440 x 1000'
+file "$screenshot_path" | grep -q 'PNG image data, 1440 x 1000'
 echo "NeBrowser smoke test passed: $screenshot_path"
 echo "Temporary profile: $profile_dir"

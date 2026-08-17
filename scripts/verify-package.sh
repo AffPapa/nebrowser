@@ -24,13 +24,13 @@ test "$bundle_name" = "$NEBROWSER_NAME"
 test "$bundle_id" = "$NEBROWSER_BUNDLE_ID"
 test "$bundle_version" = "$FIREFOX_VERSION"
 test -x "$executable_path"
-file "$executable_path" | rg -q 'arm64'
+file "$executable_path" | grep -q 'arm64'
 
 test -s "$app_path/Contents/Resources/firefox.icns"
 test -s "$app_path/Contents/Resources/Assets.car"
-xcrun assetutil --info "$app_path/Contents/Resources/Assets.car" | rg -q '"Name" : "AppIcon"'
+xcrun assetutil --info "$app_path/Contents/Resources/Assets.car" | grep -Fq '"Name" : "AppIcon"'
 
-if xcrun assetutil --info "$app_path/Contents/Resources/Assets.car" | rg -q 'Nightly|Firefox'; then
+if xcrun assetutil --info "$app_path/Contents/Resources/Assets.car" | grep -Eq 'Nightly|Firefox'; then
   echo "Mozilla artwork name leaked into packaged Assets.car" >&2
   exit 1
 fi
@@ -38,10 +38,10 @@ fi
 browser_archive="$app_path/Contents/Resources/browser/omni.ja"
 test -s "$browser_archive"
 unzip -p "$browser_archive" defaults/preferences/firefox.js | \
-  rg --fixed-strings 'pref("browser.startup.homepage",            "https://affpapa.org/");' > /dev/null
+  grep -F 'pref("browser.startup.homepage",            "https://affpapa.org/");' > /dev/null
 unzip -p "$browser_archive" defaults/preferences/firefox-branding.js | \
-  rg --fixed-strings 'pref("datareporting.policy.dataSubmissionEnabled", false);' > /dev/null
+  grep -F 'pref("datareporting.policy.dataSubmissionEnabled", false);' > /dev/null
 unzip -p "$browser_archive" defaults/preferences/firefox-branding.js | \
-  rg --fixed-strings 'pref("app.normandy.enabled", false);' > /dev/null
+  grep -F 'pref("app.normandy.enabled", false);' > /dev/null
 
 echo "NeBrowser package verification passed: $app_path"
