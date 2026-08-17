@@ -72,13 +72,13 @@ def main() -> None:
         'imply_option("MOZ_APP_ID", "{5d43746d-4ca8-48d2-a934-12a85cfe8c6e}")',
     )
 
-    # Browser builds enable the full developer-tool client by default.  The
-    # lean product keeps only the remote debugging server required by browser
-    # internals, so end users do not carry the DevTools UI chrome.
+    # Browser chrome still imports DevToolsShim for session restore, context
+    # menus and URL-bar actions.  Keep the full upstream runtime present;
+    # product defaults remove its promotional entry points separately.
     replace_once(
         args.source / "browser/moz.configure",
-        'imply_option("MOZ_DEVTOOLS", "all")',
         'imply_option("MOZ_DEVTOOLS", "server")',
+        'imply_option("MOZ_DEVTOOLS", "all")',
     )
 
     # These are Mozilla product experimentation/reporting services, not the
@@ -95,64 +95,75 @@ def main() -> None:
         'imply_option("MOZ_NORMANDY", False)',
     )
 
-    # The upstream package manifest assumes the full DevTools client.  In a
-    # server-only build its debugger preference file is intentionally absent;
-    # retaining the manifest entry makes packaging fail after a clean build.
+    # Restore upstream DevTools package and locale hooks.  Browser startup
+    # imports DevToolsShim even when developer tooling is not promoted in UI.
     replace_once(
         args.source / "browser/installer/package-manifest.in",
-        "@RESPATH@/browser/@PREF_DIR@/debugger.js\n",
-        "",
+        "@RESPATH@/browser/@PREF_DIR@/firefox.js\n"
+        "@RESPATH@/browser/@PREF_DIR@/firefox-branding.js\n",
+        "@RESPATH@/browser/@PREF_DIR@/firefox.js\n"
+        "@RESPATH@/browser/@PREF_DIR@/debugger.js\n"
+        "@RESPATH@/browser/@PREF_DIR@/firefox-branding.js\n",
     )
     replace_once(
         args.source / "browser/installer/package-manifest.in",
-        "@RESPATH@/browser/chrome/devtools@JAREXT@\n"
-        "@RESPATH@/browser/chrome/devtools.manifest\n",
-        "",
-    )
-    replace_once(
-        args.source / "browser/installer/package-manifest.in",
+        "; DevTools\n\n",
         "; [DevTools Startup Files]\n"
         "@RESPATH@/browser/chrome/devtools-startup@JAREXT@\n"
-        "@RESPATH@/browser/chrome/devtools-startup.manifest\n\n",
-        "",
+        "@RESPATH@/browser/chrome/devtools-startup.manifest\n\n"
+        "; DevTools\n"
+        "@RESPATH@/browser/chrome/devtools@JAREXT@\n"
+        "@RESPATH@/browser/chrome/devtools.manifest\n",
     )
 
-    # The browser locale Makefile also assumes the full DevTools UI exists.
-    # A server-only build has neither client nor startup locale output, so
-    # remove their langpack/repack hooks together with the package entries.
     replace_once(
         args.source / "browser/locales/Makefile.in",
+        "\t@$(MAKE) -C ../../extensions/spellcheck/locales AB_CD=$* XPI_NAME=locale-$*\n"
+        "\t@$(MAKE) l10n AB_CD=$* XPI_NAME=locale-$* PREF_DIR=$(PREF_DIR)\n",
+        "\t@$(MAKE) -C ../../extensions/spellcheck/locales AB_CD=$* XPI_NAME=locale-$*\n"
         "\t@$(MAKE) -C ../../devtools/client/locales AB_CD=$* XPI_NAME=locale-$* XPI_ROOT_APPID='$(XPI_ROOT_APPID)'\n"
-        "\t@$(MAKE) -C ../../devtools/startup/locales AB_CD=$* XPI_NAME=locale-$* XPI_ROOT_APPID='$(XPI_ROOT_APPID)'\n",
-        "",
+        "\t@$(MAKE) -C ../../devtools/startup/locales AB_CD=$* XPI_NAME=locale-$* XPI_ROOT_APPID='$(XPI_ROOT_APPID)'\n"
+        "\t@$(MAKE) l10n AB_CD=$* XPI_NAME=locale-$* PREF_DIR=$(PREF_DIR)\n",
     )
     replace_once(
         args.source / "browser/locales/Makefile.in",
+        "\t@$(MAKE) -C ../../extensions/spellcheck/locales chrome AB_CD=$*\n"
+        "\t@$(MAKE) chrome AB_CD=$*\n",
+        "\t@$(MAKE) -C ../../extensions/spellcheck/locales chrome AB_CD=$*\n"
         "\t@$(MAKE) -C ../../devtools/client/locales chrome AB_CD=$*\n"
-        "\t@$(MAKE) -C ../../devtools/startup/locales chrome AB_CD=$*\n",
-        "",
+        "\t@$(MAKE) -C ../../devtools/startup/locales chrome AB_CD=$*\n"
+        "\t@$(MAKE) chrome AB_CD=$*\n",
     )
     replace_once(
         args.source / "browser/locales/l10n.toml",
+        "\n[[includes]]\n"
+        "    path = \"toolkit/locales/l10n.toml\"\n",
+        "\n[[includes]]\n"
+        "    path = \"toolkit/locales/l10n.toml\"\n"
         "\n[[includes]]\n"
         "    path = \"devtools/client/locales/l10n.toml\"\n"
         "\n[[paths]]\n"
         "    reference = \"devtools/startup/locales/en-US/**\"\n"
         "    l10n = \"{l}devtools/startup/**\"\n",
-        "",
     )
     replace_once(
         args.source / "browser/locales/l10n.ini",
+        "     browser/branding/official\n\n"
+        "[includes]\n",
+        "     browser/branding/official\n"
         "     devtools/client\n"
-        "     devtools/startup\n",
-        "",
+        "     devtools/startup\n\n"
+        "[includes]\n",
     )
     replace_once(
         args.source / "browser/locales/filter.py",
+        '        "security/manager",\n'
+        '        "browser",\n',
+        '        "security/manager",\n'
         '        "devtools/client",\n'
         '        "devtools/shared",\n'
-        '        "devtools/startup",\n',
-        "",
+        '        "devtools/startup",\n'
+        '        "browser",\n',
     )
 
     patch_gyp_executor_import(

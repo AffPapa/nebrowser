@@ -25,6 +25,6 @@ if grep -Eq "'MOZ_(JXL|NORMANDY|SERVICES_HEALTHREPORT)': True" "$config_status";
   exit 1
 fi
 
-grep -Fq "'MOZ_DEVTOOLS': 'server'" "$config_status"
+grep -Fq "'MOZ_DEVTOOLS': 'all'" "$config_status"
 
 echo "NeBrowser build configuration verification passed"
