@@ -20,4 +20,11 @@ if rg -q "'MOZ_(UPDATER|TELEMETRY_REPORTING|CRASHREPORTER)': True" "$config_stat
   exit 1
 fi
 
+if rg -q "'MOZ_(JXL|NORMANDY|SERVICES_HEALTHREPORT)': True" "$config_status"; then
+  echo "A lean NeBrowser feature that must be compiled out is still enabled" >&2
+  exit 1
+fi
+
+rg -q --fixed-strings "'MOZ_DEVTOOLS': 'server'" "$config_status"
+
 echo "NeBrowser build configuration verification passed"

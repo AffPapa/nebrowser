@@ -72,6 +72,29 @@ def main() -> None:
         'imply_option("MOZ_APP_ID", "{5d43746d-4ca8-48d2-a934-12a85cfe8c6e}")',
     )
 
+    # Browser builds enable the full developer-tool client by default.  The
+    # lean product keeps only the remote debugging server required by browser
+    # internals, so end users do not carry the DevTools UI chrome.
+    replace_once(
+        args.source / "browser/moz.configure",
+        'imply_option("MOZ_DEVTOOLS", "all")',
+        'imply_option("MOZ_DEVTOOLS", "server")',
+    )
+
+    # These are Mozilla product experimentation/reporting services, not the
+    # Remote Settings and Safe Browsing security-data paths.  Compile them out
+    # as well as disabling their runtime preferences in the branded defaults.
+    replace_once(
+        args.source / "browser/moz.configure",
+        'imply_option("MOZ_SERVICES_HEALTHREPORT", True)',
+        'imply_option("MOZ_SERVICES_HEALTHREPORT", False)',
+    )
+    replace_once(
+        args.source / "browser/moz.configure",
+        'imply_option("MOZ_NORMANDY", True)',
+        'imply_option("MOZ_NORMANDY", False)',
+    )
+
     patch_gyp_executor_import(
         args.source / "python/mozbuild/mozbuild/frontend/reader.py"
     )
