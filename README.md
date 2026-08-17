@@ -6,6 +6,9 @@ NeBrowser — независимый браузер AffPapa на открыто�
 собственное имя, иконка и идентификатор приложения, а стартовая страница
 ведёт на [affpapa.org](https://affpapa.org/).
 
+[Страница продукта](https://affpapa.org/nebrowser/) ·
+[GitHub Releases](https://github.com/AffPapa/nebrowser/releases)
+
 > NeBrowser не связан с Mozilla, не спонсируется и не одобряется Mozilla.
 > Firefox и Mozilla являются товарными знаками Mozilla Foundation.
 

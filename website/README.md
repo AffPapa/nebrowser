@@ -12,3 +12,8 @@ Until the stable release exists, the page explicitly labels and links the
 unsigned technical preview. GitHub Pages is the public fallback; the same
 files are ready to be copied into the AffPapa web root when server access is
 available.
+
+The canonical production page is live at `https://affpapa.org/nebrowser/`.
+Future production updates use the dedicated forced-command SSH account and
+deploy an exact 40-character commit from this repository; no general shell or
+root access is granted to the deploy identity.
